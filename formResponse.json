@@ -1,0 +1,39 @@
+{
+  "dob": "1950-10-24",
+  "state": "UT",
+  "zip": "84790",
+  "county": "washington",
+  "gender": "male",
+  "newToMedicare": "no",
+  "enrollmentDates": "",
+  "currentPlanDetails": "",
+  "pcp": "Spaner",
+  "specialists": "Spaner",
+  "hospitals": "Intermountain. ",
+  "healthConditions": "Heart disease",
+  "expectedNeeds": "",
+  "budget": "300",
+  "lis": "no",
+  "oopComfort": "low",
+  "employerCoverage": "",
+  "nationwideCoverage": "not",
+  "coveragePreference": "advantage",
+  "extraBenefits": "dental, vision",
+  "referralComfort": "unsure",
+  "esrd": "no",
+  "medicaid": "no",
+  "veterans": "no",
+  "medications": [
+    {
+      "name": "Loratadine",
+      "dosage": "10",
+      "frequency": "daily"
+    },
+    {
+      "name": "Bupropion",
+      "dosage": "500",
+      "frequency": "daily"
+    }
+  ],
+  "age": 74
+}

@@ -1,0 +1,383 @@
+{
+  "clothing": {
+    "head": {
+      "bandana": {
+        "name": "Bandana",
+        "type": "clothing",
+        "defense": 1,
+        "value": 5,
+        "condition": "worn",
+        "description": "A simple cloth bandana, slightly frayed."
+      },
+      "leather_pirate_hat": {
+        "name": "Leather Pirate Hat",
+        "type": "clothing",
+        "defense": 3,
+        "value": 20,
+        "condition": "good",
+        "description": "A sturdy leather pirate hat that offers decent protection."
+      },
+      "feathered_tricorn": {
+        "name": "Feathered Tricorn",
+        "type": "clothing",
+        "defense": 5,
+        "value": 50,
+        "condition": "excellent",
+        "description": "An ornate tricorn hat adorned with colorful feathers."
+      },
+      "captains_hat": {
+        "name": "Captain's Hat",
+        "type": "clothing",
+        "defense": 4,
+        "value": 60,
+        "condition": "excellent",
+        "description": "A decorated hat worn by pirate captains, symbol of authority."
+      }
+    },
+    "accessory": {
+      "enchanted_compass": {
+        "name": "Enchanted Compass",
+        "type": "accessory",
+        "value": 200,
+        "description": "A magical compass that always points to what you desire most."
+      },
+      "navy_medal": {
+        "name": "Navy Medal",
+        "type": "accessory",
+        "value": 80,
+        "description": "A medal awarded for valor in the navy, increases respect among sailors."
+      },
+      "mayors_ring": {
+        "name": "Mayor's Ring",
+        "type": "accessory",
+        "value": 120,
+        "description": "A gold ring worn by the town mayor, often used to seal important documents."
+      }
+    }
+  },
+    "body": {
+      "linen_shirt": {
+        "name": "Linen Shirt",
+        "type": "clothing",
+        "defense": 1,
+        "value": 6,
+        "condition": "worn",
+        "description": "A lightweight linen shirt, comfortable but offers little protection."
+      },
+      "striped_shirt": {
+        "name": "Striped Shirt",
+        "type": "clothing",
+        "defense": 2,
+        "value": 10,
+        "condition": "worn",
+        "description": "A simple striped shirt, a bit faded from the sun."
+      },
+      "pirate_coat": {
+        "name": "Pirate Coat",
+        "type": "clothing",
+        "defense": 4,
+        "value": 30,
+        "condition": "good",
+        "description": "A rugged pirate coat that offers solid protection."
+      },
+      "captains_jacket": {
+        "name": "Captain's Jacket",
+        "type": "clothing",
+        "defense": 6,
+        "value": 70,
+        "condition": "excellent",
+        "description": "A finely tailored jacket befitting a ship captain."
+      }
+    },
+    "legs": {
+      "cotton_trousers": {
+        "name": "Cotton Trousers",
+        "type": "clothing",
+        "defense": 1,
+        "value": 7,
+        "condition": "worn",
+        "description": "Simple cotton trousers, comfortable for travel but not very sturdy."
+      },
+      "tattered_pants": {
+        "name": "Tattered Pants",
+        "type": "clothing",
+        "defense": 1,
+        "value": 5,
+        "condition": "worn",
+        "description": "Old pants with several patches and tears."
+      },
+      "sailor_trousers": {
+        "name": "Sailor Trousers",
+        "type": "clothing",
+        "defense": 3,
+        "value": 20,
+        "condition": "good",
+        "description": "Durable trousers suitable for life at sea."
+      },
+      "pirate_breeches": {
+        "name": "Pirate Breeches",
+        "type": "clothing",
+        "defense": 5,
+        "value": 50,
+        "condition": "excellent",
+        "description": "Stylish breeches favored by seasoned pirates."
+      }
+    },
+    "feet": {
+      "worn_boots": {
+        "name": "Worn Boots",
+        "type": "clothing",
+        "defense": 1,
+        "value": 5,
+        "condition": "worn",
+        "description": "Old boots that have seen many voyages."
+      },
+      "leather_boots": {
+        "name": "Leather Boots",
+        "type": "clothing",
+        "defense": 3,
+        "value": 20,
+        "condition": "good",
+        "description": "Sturdy leather boots that provide decent protection."
+      },
+      "captains_boots": {
+        "name": "Captain's Boots",
+        "type": "clothing",
+        "defense": 5,
+        "value": 50,
+        "condition": "excellent",
+        "description": "Elegant boots worn by ship captains."
+      }
+    }
+  ,
+  "weapons": {
+    "admirals_sabre": {
+      "name": "Admiral's Sabre",
+      "type": "weapon",
+      "damage": 35,
+      "value": 250,
+      "condition": "excellent",
+      "description": "A finely crafted sabre carried by navy admirals."
+    },
+    "trident": {
+      "name": "Trident",
+      "type": "weapon",
+      "damage": 30,
+      "value": 180,
+      "condition": "good",
+      "description": "A three-pronged spear wielded by merfolk warriors."
+    },
+    "wraith_blade": {
+      "name": "Wraith Blade",
+      "type": "weapon",
+      "damage": 50,
+      "value": 400,
+      "condition": "mystical",
+      "description": "A ghostly blade that chills the soul, used by wraith captains."
+    },
+    "cannon": {
+      "name": "Cannon",
+      "type": "weapon",
+      "damage": 100,
+      "value": 500,
+      "condition": "good",
+      "description": "A large naval cannon capable of firing heavy cannonballs.",
+      "size": 50
+    },
+    "rusty_cutlass": {
+      "name": "Rusty Cutlass",
+      "type": "weapon",
+      "damage": 10,
+      "value": 15,
+      "condition": "poor",
+      "description": "A well-worn blade with chips and rust spots",
+      "size": 3
+    },
+    "silver_sword": {
+      "name": "Silver Sword",
+      "type": "weapon",
+      "damage": 25,
+      "value": 100,
+      "condition": "excellent",
+      "description": "A finely crafted blade that gleams in the light",
+      "size": 3
+    },
+    "flintlock_pistol": {
+      "name": "Flintlock Pistol",
+      "type": "weapon",
+      "damage": 40,
+      "value": 150,
+      "condition": "good",
+      "description": "A single-shot pistol with a flintlock mechanism",
+      "size": 2
+    },
+    "blunderbuss": {
+      "name": "Blunderbuss",
+      "type": "weapon",
+      "damage": 60,
+      "value": 250,
+      "condition": "excellent",
+      "description": "A short-barreled firearm that fires a spread of shot",
+      "size": 5
+    }
+  },
+  "ammo": {
+    "pistol_ammo": {
+      "name": "Pistol Ammo",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 2,
+      "description": "A single round of ammunition for flintlock pistols",
+      "size": 0.1,
+      "damagebonus": 5
+    },
+    "blunderbuss_ammo": {
+      "name": "Blunderbuss Ammo",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 5,
+      "description": "A single round of ammunition for blunderbusses",
+      "size": 0.2,
+      "damagebonus": 10
+    },
+    "cannonball": {
+      "name": "Cannonball",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 10,
+      "description": "A solid iron cannonball for ship cannons",
+      "size": 2,
+      "damagebonus": 20
+    },
+    "chainshot": {
+      "name": "Chainshot",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 15,
+      "description": "Two smaller cannonballs linked by a chain, used to damage sails and rigging",
+      "size": 3,
+      "damagebonus": 30
+    },
+    "silver_bullet": {
+      "name": "Silver Bullet",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 50,
+      "description": "A special bullet made of silver, effective against supernatural foes",
+      "size": 0.1,
+      "damagebonus": 5
+    },
+    "explosive_cannonball": {
+      "name": "Explosive Cannonball",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 100,
+      "description": "A cannonball filled with gunpowder that explodes on impact",
+      "size": 2,
+      "damagebonus": 50
+    },
+    "explosive_barrel": {
+      "name": "Explosive Barrel",
+      "type": "ammo",
+      "quantity": 1,
+      "value": 200,
+      "description": "A barrel filled with gunpowder that can be ignited to cause a large explosion",
+      "size": 20,
+      "damagebonus": 100
+    }
+  },
+  "consumables": {
+    "leviathan_scale": {
+      "name": "Leviathan Scale",
+      "type": "consumable",
+      "effect": { "defense": 20 },
+      "value": 300,
+      "description": "A massive scale from the legendary Leviathan, grants temporary invulnerability."
+    },
+    "rum_bottle": {
+      "name": "Bottle of Rum",
+      "type": "consumable",
+      "effect": {
+        "health": 10
+      },
+      "value": 8,
+      "description": "Strong liquor that warms the soul",
+      "size": 1
+    },
+    "kraken_ink": {
+      "name": "Kraken Ink",
+      "type": "consumable",
+      "effect": {
+        "stealth": 20,
+        "duration": 5
+      },
+      "value": 100,
+      "description": "A vial of ink from a kraken, can be used to create a smokescreen",
+      "size": 0.5
+    },
+    "healing_potion": {
+      "name": "Healing Potion",
+      "type": "consumable",
+      "effect": {
+        "health": 25
+      },
+      "value": 30,
+      "description": "A magical elixir that mends wounds",
+      "size": 1
+    }
+  },
+  "treasure": {
+    "gold_coins": {
+      "name": "Gold Coins",
+      "type": "currency",
+      "baseValue": 1,
+      "description": "Shiny pieces of eight"
+    },
+    "torn_map_fragment": {
+      "name": "Torn Map Fragment",
+      "type": "quest",
+      "value": 0,
+      "description": "A weathered scrap of parchment showing part of a treasure map. It looks like it could be important."
+    }
+  },
+  "weapon": {
+    "sturdy cutlass": {
+      "description": "A well-balanced steel cutlass, sharper than a rusty one. Increases combat effectiveness.",
+      "name": "Sturdy Cutlass",
+      "price": 30,
+      "type": "weapon"
+    },
+    "sword": {
+      "Sturdy Sword": {
+        "description": "A well-balanced steel sword, more reliable than a rusty cutlass.",
+        "name": "Sturdy Sword",
+        "price": 40
+      }
+    },
+    "hammer": {
+      "blacksmith_hammer": {
+        "damage": 8,
+        "description": "A sturdy iron hammer used for forging, capable of delivering crushing blows in combat.",
+        "name": "Heavy Blacksmith's Hammer",
+        "price": 25,
+        "weight": 5
+      }
+    }
+  },
+  "armor": {
+    "armor": {
+      "Leather Jerkin": {
+        "description": "Reinforced leather armor offering decent protection.",
+        "name": "Leather Jerkin",
+        "price": 30
+      }
+    },
+    "shield": {
+      "Iron Shield": {
+        "description": "A sturdy iron shield, can block melee attacks.",
+        "name": "Iron Shield",
+        "price": 35
+      }
+    }
+  }
+}

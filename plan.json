@@ -1,0 +1,270 @@
+
+{
+  "plan_info": {
+    "deductible": {
+      "amount": 35,
+      "currency": "USD"
+    }
+  },
+  "benefits": {
+    "Inpatient Hospital": {
+      "in_network": {
+        "amount": 350,
+        "currency": "USD",
+        "unit": "day"
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Outpatient Hospital": {
+      "in_network": {
+        "amount": 295,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Ambulatory surgical center": {
+      "in_network": {
+        "amount": 195,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Primary Care": {
+      "in_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Specialist": {
+      "in_network": {
+        "amount": 20,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Preventive care": {
+      "in_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      }
+    },
+    "Emergency Care": {
+      "in_network": {
+        "text": "Not Covered"
+      },
+      "out_network": {
+        "text": "Not Covered"
+      }
+    },
+    "Diagnostic tests and procedures": {
+      "in_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Lab Services": {
+      "in_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Diagnostic Imaging": {
+      "in_network": {
+        "amount": 250,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Outpatient x‑rays": {
+      "in_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Hearing": {
+      "in_network": {
+        "amount": 1250,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "text": "Not Covered"
+      }
+    },
+    "Ambulance": {
+      "in_network": {
+        "amount": 240,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "amount": 240,
+        "currency": "USD",
+        "unit": null
+      }
+    },
+    "Chemotherapy drugs": {
+      "in_network": {
+        "percent": 0,
+        "type": "coinsurance"
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Part B Insulin": {
+      "in_network": {
+        "amount": 35,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "amount": 35,
+        "currency": "USD",
+        "unit": null
+      }
+    },
+    "Other Part B drugs": {
+      "in_network": {
+        "percent": 0,
+        "type": "coinsurance"
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Acupuncture": {
+      "in_network": {
+        "amount": 20,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": null
+    },
+    "Chiropractic": {
+      "in_network": {
+        "amount": 20,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": null
+    },
+    "Diabetic supplies": {
+      "in_network": {
+        "percent": 0,
+        "type": "coinsurance"
+      },
+      "out_network": {
+        "percent": 0,
+        "type": "coinsurance"
+      }
+    },
+    "Foot exams and treatment": {
+      "in_network": {
+        "amount": 35,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Home health care": {
+      "in_network": {
+        "amount": 0,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Durable Medical Equipment": {
+      "in_network": {
+        "percent": 0,
+        "type": "coinsurance"
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Prosthetics": {
+      "in_network": {
+        "percent": 20,
+        "type": "coinsurance"
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    },
+    "Substance Use Disorder": {
+      "in_network": {
+        "amount": 40,
+        "currency": "USD",
+        "unit": null
+      },
+      "out_network": {
+        "percent": 50,
+        "type": "coinsurance"
+      }
+    }
+  },
+  "prescriptions": {
+    "deductible": {},
+    "tiers": {}
+  },
+  "extra_benefits": {
+    "Fitness": "SilverSneakers membership"
+  }
+}
