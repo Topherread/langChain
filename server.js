@@ -14,11 +14,6 @@ const llm = new ChatOllama({
   model: 'gpt-oss:20b'
 });
 
-console.log("LLM Configuration:", {
-  baseUrl: llm.baseUrl,
-  model: llm.model
-});
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -47,22 +42,24 @@ function saveItems(items) {
 }
 
 function getAllItems() {
+    delete require.cache[require.resolve('./items.json')];
     const ITEMS = loadItems();
     const all = [];
-    for (const category in ITEMS) {
-        const group = ITEMS[category];
-        if (typeof group === 'object') {
-            for (const subcat in group) {
-                if (typeof group[subcat] === 'object') {
-                    for (const key in group[subcat]) {
-                        all.push(group[subcat][key]);
-                    }
+    
+    function extractItems(obj, path = []) {
+        for (const key in obj) {
+            const value = obj[key];
+            if (value && typeof value === 'object') {
+                if (value.name && typeof value.name === 'string') {
+                    all.push(value);
                 } else {
-                    all.push(group[subcat]);
+                    extractItems(value, [...path, key]);
                 }
             }
         }
     }
+    
+    extractItems(ITEMS);
     return all;
 }
 
@@ -200,13 +197,14 @@ class GetItemInfoTool extends StructuredTool {
 
     async _call({ name }) {
         const allItems = getAllItems();
+        const validItems = allItems.filter(i => i && i.name && typeof i.name === 'string');
         
-        let item = allItems.find(i => i.name.toLowerCase() === name.toLowerCase());
+        let item = validItems.find(i => i.name.toLowerCase() === name.toLowerCase());
         if (item) {
             return item;
         }
         
-        const partialMatches = allItems.filter(i => 
+        const partialMatches = validItems.filter(i => 
             i.name.toLowerCase().includes(name.toLowerCase()) || 
             name.toLowerCase().includes(i.name.toLowerCase())
         );
@@ -220,7 +218,7 @@ class GetItemInfoTool extends StructuredTool {
         }
         
         const availableTypes = [...new Set(allItems.map(i => i.type))];
-        throw new Error(`Item not found: ${name}. Available item types: ${availableTypes.join(', ')}. Use listItemCategories tool to see all available items or addItemToItemsList tool to create this item.`);
+        throw new Error(`Item not found: ${name}. REQUIRED WORKFLOW: 1) Call listItemCategories, 2) Call addItemToItemsList to create '${name}', 3) Call get_item_info again. Available types: ${availableTypes.join(', ')}.`);
     }
 }
 
@@ -266,7 +264,6 @@ class GetShopItemsTool extends StructuredTool {
                 );
                 
                 if (similarCategories.length > 0) {
-                    console.log(`No exact match for type '${type}', trying similar categories:`, similarCategories);
                     for (const category of similarCategories) {
                         const categoryItems = this.getItemsFromCategory(ITEMS[category]);
                         filteredItems.push(...categoryItems);
@@ -333,21 +330,35 @@ class AddItemToItemsListTool extends StructuredTool {
         category: z.string().describe("The top-level category for the item (e.g., weapons, clothing, ammo, consumables, treasure)"),
         subcategory: z.string().optional().describe("The subcategory for the item, if any (e.g., head, body, legs, feet)"),
         key: z.string().describe("The unique key for the item within its category/subcategory"),
-        itemData: z.object({}).describe("The full item object to add, matching the item schema")
+        itemData: z.object({
+            name: z.string().describe("The display name of the item"),
+            type: z.string().describe("The type of item (e.g., weapon, clothing, consumable)"),
+            description: z.string().describe("A detailed description of the item"),
+            damage: z.number().optional().describe("Damage value for weapons"),
+            value: z.number().optional().describe("Gold value of the item"),
+            condition: z.string().optional().describe("Condition of the item (poor, good, excellent)"),
+            size: z.number().optional().describe("Size of the item"),
+            rarity: z.string().optional().describe("Rarity of the item (common, rare, legendary)"),
+            weight: z.number().optional().describe("Weight of the item")
+        }).describe("The full item object to add with its properties")
     });
 
     async _call({ category, subcategory, key, itemData }) {
+        if (!itemData || !itemData.name) {
+            throw new Error(`Invalid itemData: missing name property. Received: ${JSON.stringify(itemData)}`);
+        }
+    
         const ITEMS = loadItems();
         if (!ITEMS[category]) ITEMS[category] = {};
         if (subcategory) {
             if (!ITEMS[category][subcategory]) ITEMS[category][subcategory] = {};
-            if (ITEMS[category][subcategory][key]) {
-                return false;
+            if (ITEMS[category][subcategory][key] && Object.keys(ITEMS[category][subcategory][key]).length > 0) {
+                throw new Error(`Item already exists: ${key}. The item is already in the database. Use get_item_info to retrieve information about this existing item.`);
             }
             ITEMS[category][subcategory][key] = itemData;
         } else {
-            if (ITEMS[category][key]) {
-                return false;
+            if (ITEMS[category][key] && Object.keys(ITEMS[category][key]).length > 0) {
+                throw new Error(`Item already exists: ${key}. The item is already in the database. Use get_item_info to retrieve information about this existing item.`);
             }
             ITEMS[category][key] = itemData;
         }
@@ -446,41 +457,25 @@ const graphStateData = {
 };
 
 async function processWithToolsNode(state) {
-    console.log("=== PROCESSING WITH TOOLS NODE ===");
-    console.log("Input state messages:", state.messages.length);
 
-    const maxRetries = 4; // Allow up to 4 retry attempts
+    const maxRetries = 6; // Allow up to 6 retry attempts for complex workflows
     let currentAttempt = 0;
     let currentMessages = [...state.messages];
+    let hasFailures = false; // Track if we've had any failures in this conversation
     
     while (currentAttempt <= maxRetries) {
-        console.log(`=== ATTEMPT ${currentAttempt + 1}/${maxRetries + 1} ===`);
-        
         //bind the llm with tools
         const llmWithTools = llm.bind({ tools: allTools });
         
         let response;
         try {
-            console.log("=== CALLING LLM WITH TOOLS ===");
-            console.log("Messages to LLM:", currentMessages.length);
-            console.log("Available tools:", allTools.map(t => t.name));
             //initial call to llm with tools
             response = await llmWithTools.invoke(currentMessages);
             
-            console.log("RAW LLM RESPONSE:", JSON.stringify(response, null, 2));
-            console.log("Response content:", response.content);
-            console.log("Response content length:", response.content?.length || 0);
-            console.log("Tool calls:", response.tool_calls);
-            console.log("Tool calls count:", response.tool_calls?.length || 0);
+
             
         } catch (llmError) {
-            console.error("ERROR IN INITIAL LLM CALL:", llmError);
-            console.error("LLM Error details:", {
-                message: llmError.message,
-                stack: llmError.stack,
-                baseUrl: llm.baseUrl,
-                model: llm.model
-            });
+            console.error("LLM Error:", llmError.message);
             
             return {
                 messages: [...currentMessages],
@@ -489,18 +484,18 @@ async function processWithToolsNode(state) {
         }
         //if the llm requested any tool calls execute them
         if (response.tool_calls && response.tool_calls.length > 0) {
-            console.log(`=== EXECUTING ${response.tool_calls.length} TOOL(S) ===`);
+
             const toolResults = [];
-            let canRetry = false;
+            let currentBatchHasFailures = false;
             
             for (const toolCall of response.tool_calls) {
-                console.log("TOOL REQUESTED BY LLM:", JSON.stringify(toolCall, null, 2));
+                console.log(`→ ${toolCall.name}: ${JSON.stringify(toolCall.args)}`);
                 
                 const tool = allTools.find(t => t.name === toolCall.name);
                 if (tool) {
                     try {
                         const toolResult = await tool.invoke(toolCall.args);
-                        console.log(`TOOL ${toolCall.name} RESULT:`, JSON.stringify(toolResult, null, 2));
+                        console.log(`✓ ${toolCall.name}: Success`);
                         toolResults.push({
                             tool_call_id: toolCall.id,
                             role: "tool",
@@ -508,11 +503,12 @@ async function processWithToolsNode(state) {
                             content: JSON.stringify(toolResult)
                         });
                     } catch (error) {
-                        console.error(`Error executing tool ${toolCall.name}:`, error);
+                        console.log(`✗ ${toolCall.name}: ${error.message}`);
                         
                         // Mark that we have failures and can retry
                         if (currentAttempt < maxRetries) {
-                            canRetry = true;
+                            currentBatchHasFailures = true;
+                            hasFailures = true;
                         }
                         
                         let fallbackSuggestion = error.message;
@@ -523,6 +519,10 @@ async function processWithToolsNode(state) {
                         
                         if (toolCall.name === 'get_enemies_info' && error.message.includes('not found')) {
                             fallbackSuggestion += '. Suggestion: Use listEnemyCategories tool to see available categories, or use createEnemy tool to create this enemy if it should exist.';
+                        }
+                        
+                        if (toolCall.name === 'addItemToItemsList' && error.message.includes('already exists')) {
+                            fallbackSuggestion += '. The item already exists in the database. Use get_item_info to retrieve information about this existing item.';
                         }
                         
                         if (toolCall.name === 'getShopItems' && error.message.includes('Category not found')) {
@@ -541,7 +541,7 @@ async function processWithToolsNode(state) {
                         });
                     }
                 } else {
-                    console.error(`Tool not found: ${toolCall.name}`);
+                    console.log(`✗ Unknown tool: ${toolCall.name}`);
                     toolResults.push({
                     tool_call_id: toolCall.id,
                     role: "tool",
@@ -555,13 +555,55 @@ async function processWithToolsNode(state) {
             currentMessages = [...currentMessages, response, ...toolResults];
 
         
-            if (canRetry && currentAttempt < maxRetries) {
-                console.log(`=== TOOL FAILURES DETECTED - RETRYING (Attempt ${currentAttempt + 2}/${maxRetries + 1}) ===`);
+            // Check if we made successful progress in creation tools
+            const hadSuccessfulCreation = toolResults.some(tr => 
+                (tr.name === 'addItemToItemsList' || tr.name === 'createEnemy') && 
+                tr.content === 'true'
+            );
+            
+            // Also check if we discovered that items already exist (this resolves the original failure)
+            const discoveredExistingItem = toolResults.some(tr => 
+                (tr.name === 'addItemToItemsList' || tr.name === 'createEnemy') && 
+                tr.content && tr.content.includes('already exists')
+            );
+            
+            // Reset failure tracking after successful creation or discovering existing items
+            if (hadSuccessfulCreation || discoveredExistingItem) {
+                hasFailures = false;
+            }
+            
+            // Continue retrying if:
+            // 1. We had failures in this batch, OR
+            // 2. We had previous failures and are still working on them, OR  
+            // 3. We're using discovery tools (indicating we're in a workflow sequence)
+            // BUT NOT if we just successfully created something - then we should try the original request again
+            const usingDiscoveryTools = response.tool_calls.some(tc => 
+                ['listItemCategories', 'listEnemyCategories'].includes(tc.name)
+            );
+            
+            // Should retry if:
+            // 1. Current batch has failures, OR
+            // 2. We had previous failures and haven't made progress yet, OR  
+            // 3. We're using discovery tools, OR
+            // 4. We just successfully created something (should try original request again) - BUT only once
+            const shouldRetryAfterCreation = hadSuccessfulCreation && currentAttempt < maxRetries;
+            const shouldRetry = (currentBatchHasFailures || hasFailures || usingDiscoveryTools || shouldRetryAfterCreation) && currentAttempt < maxRetries;
+            
+            if (shouldRetry) {
+                
+                let retryGuidanceContent;
+                if (hadSuccessfulCreation) {
+                    retryGuidanceContent = "✅ ITEM CREATED SUCCESSFULLY! The item has been added to the database. STOP creating items. Now IMMEDIATELY call get_item_info with the original item name to retrieve the information and provide it to the user. DO NOT call addItemToItemsList again.";
+                } else if (discoveredExistingItem) {
+                    retryGuidanceContent = "ITEM EXISTS: The item you tried to create already exists in the database. Now retry the original request (like get_item_info) since the item is available.";
+                } else {
+                    retryGuidanceContent = "WORKFLOW CONTINUATION REQUIRED: Some tools failed but you've gathered more information. Now continue the workflow by using the suggested tools in sequence. For example: if get_item_info failed but listItemCategories showed the item exists, now call addItemToItemsList to create it, then call get_item_info again. Complete the full workflow to satisfy the user's original request.";
+                }
                 
                 // response with guidance to use discovery tools
                 const retryGuidanceMessage = {
                     role: "system",
-                    content: "Some tools failed with suggestions. Please use the suggested discovery tools to get the correct information and then retry your original request with the proper parameters. Focus on following the specific suggestions provided in the error messages."
+                    content: retryGuidanceContent
                 };
                 currentMessages.push(retryGuidanceMessage);
                 
@@ -569,30 +611,35 @@ async function processWithToolsNode(state) {
                 continue;
             }
 
-            //final response after all tool call attempt
-            console.log("=== GENERATING FINAL RESPONSE WITH TOOL RESULTS ===");
-            console.log("Updated messages count:", currentMessages.length);
             
             let finalResponse;
             try {
-                finalResponse = await llm.invoke(currentMessages);
-                console.log("FINAL RESPONSE:", JSON.stringify(finalResponse, null, 2));
-                console.log("Final content:", finalResponse.content);
-                console.log("Final content length:", finalResponse.content?.length || 0);
-                console.log("Final content type:", typeof finalResponse.content);
+                // Extract the LAST user query from the messages (most recent)
+                const userMessages = state.messages.filter(msg => msg.constructor.name === 'HumanMessage');
+                const userQuery = userMessages[userMessages.length - 1]?.content || "the player's request";
+                
+
+                
+                // Create a simplified final message without tool binding
+                const simplifiedMessages = [
+                    new SystemMessage("You are a pirate game narrator. Based on the tool results provided, give a narrative response about what the player discovered. Do not make any tool calls - just provide story content."),
+                    new HumanMessage(`The player asked: "${userQuery}". Here are the tool results: ${JSON.stringify(toolResults.map(tr => ({tool: tr.name, result: tr.content})), null, 2)}. Provide a narrative response about what the player discovered based on their original question.`)
+                ];
+                
+                // Use LLM without tools for final response
+                finalResponse = await llm.invoke(simplifiedMessages);
+
             } catch (finalError) {
-                console.error("ERROR IN FINAL LLM CALL:", finalError);
+                console.error("Final response error:", finalError.message);
                 return {
                     messages: currentMessages,
-                    result: `Error in final LLM response: ${finalError.message}. Tool results were: ${JSON.stringify(toolResults, null, 2)}`
+                    result: `Error in final LLM response: ${finalError.message}. Tool results were: ${JSON.stringify(toolResults.map(tr => ({tool: tr.name, result: tr.content})), null, 2)}`
                 };
             }
             
             let finalContent = finalResponse?.content;
             
             if (!finalContent || finalContent.trim() === '') {
-                console.warn("WARNING: LLM returned empty content");
-                console.log("Full LLM response object:", finalResponse);
                 finalContent = `The tools were executed successfully, but the LLM failed to generate a proper response. Tool results: ${JSON.stringify(toolResults.map(tr => ({tool: tr.name, result: tr.content})), null, 2)}`;
             }
             
@@ -601,15 +648,14 @@ async function processWithToolsNode(state) {
                 result: finalContent
             };
         } else {
-            // No tools called, return direct response
-            console.log("=== NO TOOLS CALLED, RETURNING DIRECT RESPONSE ===");
+
             const content = response.content || "I apologize, but I couldn't generate a proper response. Please try rephrasing your request.";
             return {
                 messages: [...currentMessages, response],
                 result: content
             };
         }
-    } // End of retry while loop
+    } 
 }
 
 
@@ -629,8 +675,7 @@ const graph = workflow.compile();
 app.post('/api/chat', async (req, res) => {
     try {
         const { messages, model } = req.body;
-        console.log('=== INCOMING API REQUEST ===');
-        console.log('Messages:', JSON.stringify(messages, null, 2));
+
         
         if (!messages || !Array.isArray(messages)) {
             return res.status(400).json({ error: 'Messages array required' });
@@ -649,46 +694,41 @@ app.post('/api/chat', async (req, res) => {
         const toolGuidanceMessage = new SystemMessage(`
 INTELLIGENT TOOL USAGE GUIDELINES:
 
-When tool calls fail, use these fallback strategies:
+CRITICAL: You can make multiple tool calls in a single response. When an item is not found, make ALL necessary tool calls at once:
 
-1. ITEM-RELATED FAILURES:
-   - If get_item_info fails with "not found": Use listItemCategories tool to see available categories, then either find a similar item or use addItemToItemsList to create it
-   - If getShopItems fails with category error: Use listItemCategories first to see valid categories
-   - If unsure about item structure: Use listItemCategories to understand the data organization
+ITEM CREATION WORKFLOW - Make these tool calls in ONE response:
+1. If get_item_info fails: Call addItemToItemsList AND get_item_info in the same response
+2. For addItemToItemsList, use category "weapons" for weapon items
+3. Create appropriate item data with name, type, damage, description, etc.
 
-2. ENEMY-RELATED FAILURES:
-   - If get_enemies_info fails with "not found": Use listEnemyCategories tool to see available categories, then either find a similar enemy or use createEnemy to create it
-   - If getRandomEnemy fails with category error: Use listEnemyCategories first to see valid categories
-   - If unsure about enemy structure: Use listEnemyCategories to understand the data organization
+ENEMY CREATION WORKFLOW - Make these tool calls in ONE response:
+1. If get_enemies_info fails: Call createEnemy AND get_enemies_info in the same response
+2. Use appropriate enemy categories
 
-3. GENERAL STRATEGY:
-   - Always explore available options before giving up
-   - Use list/discovery tools when specific lookups fail
-   - Suggest creating missing content when appropriate
-   - Provide helpful alternatives when exact matches aren't found
+MANDATORY RULES:
+- Make multiple tool calls in a single response when needed
+- Don't wait for tool results - chain the calls together
+- Create realistic item/enemy data that fits the pirate theme
+- After tool calls succeed, the system will generate narrative content automatically
 
-4. AVAILABLE DISCOVERY TOOLS:
-   - listItemCategories: Shows all item categories and their structure
-   - listEnemyCategories: Shows all enemy categories and their structure  
-   - listAllEnemies: Lists all enemies by category
-   - listItemTypes: Shows all item types available
+AVAILABLE TOOLS FOR DISCOVERY:
+- listItemCategories: Shows all item categories and structure
+- listEnemyCategories: Shows all enemy categories and structure
+- listAllEnemies: Lists all enemies by category
+- listItemTypes: Shows all item types available
 
-Remember: Your goal is to be helpful and resourceful, not just report failures.
+Remember: You are capable of creating content dynamically. Use this power!
         `);
         
         //adds guidance message at the start of the conversation
         langChainMessages.unshift(toolGuidanceMessage);
-
-        console.log('Converted LangChain messages:', langChainMessages.length);
 
         const result = await graph.invoke({
             messages: langChainMessages,
             result: ""
         });
 
-        console.log('=== GRAPH EXECUTION COMPLETE ===');
-        console.log('Final AI response length:', result.result?.length || 0);
-        console.log('Final AI response:', result.result);
+
         
         const finalContent = result.result || "I'm sorry, I encountered an issue processing your request. Please try again.";
         
@@ -699,9 +739,7 @@ Remember: Your goal is to be helpful and resourceful, not just report failures.
             }
         });
     } catch (error) {
-        console.error('=== API ERROR ===');
-        console.error('Error details:', error);
-        console.error('Stack trace:', error.stack);
+        console.error('API Error:', error.message);
         res.status(500).json({ 
             error: 'Internal server error',
             details: error.message 

@@ -169,19 +169,38 @@
     "dragon": {
       "name": "dragon",
       "health": 200,
-      "damage": 30,
-      "skill": 8,
+      "damage": 50,
+      "skill": 10,
       "loot": [
-        "dragon_scale",
-        "ruby",
-        "crystal_fragment"
+        "Dragon Scale",
+        "Fire Gem"
       ],
-      "description": "A massive, winged beast with scales of obsidian and eyes that glow like embers. Its roar can shake the very foundations of the island, and it breathes a searing flame that can melt steel.",
+      "description": "A massive crimson dragon with scales shimmering like molten gold, eyes like burning embers, wings spanning the sky. It hovers above Port Haven, breathing a hiss of heat that rattles the tavern windows.",
       "weaknesses": [
         "ice"
       ],
       "resistances": [
         "fire"
+      ]
+    },
+    "obsidian_dragon": {
+      "name": "Obsidian Dragon",
+      "health": 800,
+      "damage": 120,
+      "skill": 9,
+      "loot": [
+        "glowing ember",
+        "scale fragment",
+        "dragon claw"
+      ],
+      "description": "A towering beast with obsidian scales, smoke curling from its nostrils, and eyes that blaze like molten gold. This dragon has been rumored to guard an ancient treasure trove in the northern archipelago.",
+      "weaknesses": [
+        "ice",
+        "lightning"
+      ],
+      "resistances": [
+        "fire",
+        "magic"
       ]
     }
   },

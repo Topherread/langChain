@@ -55,101 +55,100 @@
       }
     }
   },
-    "body": {
-      "linen_shirt": {
-        "name": "Linen Shirt",
-        "type": "clothing",
-        "defense": 1,
-        "value": 6,
-        "condition": "worn",
-        "description": "A lightweight linen shirt, comfortable but offers little protection."
-      },
-      "striped_shirt": {
-        "name": "Striped Shirt",
-        "type": "clothing",
-        "defense": 2,
-        "value": 10,
-        "condition": "worn",
-        "description": "A simple striped shirt, a bit faded from the sun."
-      },
-      "pirate_coat": {
-        "name": "Pirate Coat",
-        "type": "clothing",
-        "defense": 4,
-        "value": 30,
-        "condition": "good",
-        "description": "A rugged pirate coat that offers solid protection."
-      },
-      "captains_jacket": {
-        "name": "Captain's Jacket",
-        "type": "clothing",
-        "defense": 6,
-        "value": 70,
-        "condition": "excellent",
-        "description": "A finely tailored jacket befitting a ship captain."
-      }
+  "body": {
+    "linen_shirt": {
+      "name": "Linen Shirt",
+      "type": "clothing",
+      "defense": 1,
+      "value": 6,
+      "condition": "worn",
+      "description": "A lightweight linen shirt, comfortable but offers little protection."
     },
-    "legs": {
-      "cotton_trousers": {
-        "name": "Cotton Trousers",
-        "type": "clothing",
-        "defense": 1,
-        "value": 7,
-        "condition": "worn",
-        "description": "Simple cotton trousers, comfortable for travel but not very sturdy."
-      },
-      "tattered_pants": {
-        "name": "Tattered Pants",
-        "type": "clothing",
-        "defense": 1,
-        "value": 5,
-        "condition": "worn",
-        "description": "Old pants with several patches and tears."
-      },
-      "sailor_trousers": {
-        "name": "Sailor Trousers",
-        "type": "clothing",
-        "defense": 3,
-        "value": 20,
-        "condition": "good",
-        "description": "Durable trousers suitable for life at sea."
-      },
-      "pirate_breeches": {
-        "name": "Pirate Breeches",
-        "type": "clothing",
-        "defense": 5,
-        "value": 50,
-        "condition": "excellent",
-        "description": "Stylish breeches favored by seasoned pirates."
-      }
+    "striped_shirt": {
+      "name": "Striped Shirt",
+      "type": "clothing",
+      "defense": 2,
+      "value": 10,
+      "condition": "worn",
+      "description": "A simple striped shirt, a bit faded from the sun."
     },
-    "feet": {
-      "worn_boots": {
-        "name": "Worn Boots",
-        "type": "clothing",
-        "defense": 1,
-        "value": 5,
-        "condition": "worn",
-        "description": "Old boots that have seen many voyages."
-      },
-      "leather_boots": {
-        "name": "Leather Boots",
-        "type": "clothing",
-        "defense": 3,
-        "value": 20,
-        "condition": "good",
-        "description": "Sturdy leather boots that provide decent protection."
-      },
-      "captains_boots": {
-        "name": "Captain's Boots",
-        "type": "clothing",
-        "defense": 5,
-        "value": 50,
-        "condition": "excellent",
-        "description": "Elegant boots worn by ship captains."
-      }
+    "pirate_coat": {
+      "name": "Pirate Coat",
+      "type": "clothing",
+      "defense": 4,
+      "value": 30,
+      "condition": "good",
+      "description": "A rugged pirate coat that offers solid protection."
+    },
+    "captains_jacket": {
+      "name": "Captain's Jacket",
+      "type": "clothing",
+      "defense": 6,
+      "value": 70,
+      "condition": "excellent",
+      "description": "A finely tailored jacket befitting a ship captain."
     }
-  ,
+  },
+  "legs": {
+    "cotton_trousers": {
+      "name": "Cotton Trousers",
+      "type": "clothing",
+      "defense": 1,
+      "value": 7,
+      "condition": "worn",
+      "description": "Simple cotton trousers, comfortable for travel but not very sturdy."
+    },
+    "tattered_pants": {
+      "name": "Tattered Pants",
+      "type": "clothing",
+      "defense": 1,
+      "value": 5,
+      "condition": "worn",
+      "description": "Old pants with several patches and tears."
+    },
+    "sailor_trousers": {
+      "name": "Sailor Trousers",
+      "type": "clothing",
+      "defense": 3,
+      "value": 20,
+      "condition": "good",
+      "description": "Durable trousers suitable for life at sea."
+    },
+    "pirate_breeches": {
+      "name": "Pirate Breeches",
+      "type": "clothing",
+      "defense": 5,
+      "value": 50,
+      "condition": "excellent",
+      "description": "Stylish breeches favored by seasoned pirates."
+    }
+  },
+  "feet": {
+    "worn_boots": {
+      "name": "Worn Boots",
+      "type": "clothing",
+      "defense": 1,
+      "value": 5,
+      "condition": "worn",
+      "description": "Old boots that have seen many voyages."
+    },
+    "leather_boots": {
+      "name": "Leather Boots",
+      "type": "clothing",
+      "defense": 3,
+      "value": 20,
+      "condition": "good",
+      "description": "Sturdy leather boots that provide decent protection."
+    },
+    "captains_boots": {
+      "name": "Captain's Boots",
+      "type": "clothing",
+      "defense": 5,
+      "value": 50,
+      "condition": "excellent",
+      "description": "Elegant boots worn by ship captains."
+    }
+  },
   "weapons": {
     "admirals_sabre": {
       "name": "Admiral's Sabre",
@@ -219,6 +218,41 @@
       "condition": "excellent",
       "description": "A short-barreled firearm that fires a spread of shot",
       "size": 5
+    },
+    "weapon": {
+      "fireblade": {},
+      "rusty_cutlass": {}
+    },
+    "cutlass": {
+      "silver_sword": {},
+      "Silver Sword": {},
+      "rusty_cutlass": {
+        "name": "Rusty Cutlass",
+        "type": "cutlass",
+        "description": "An old cutlass with rust, but still sharp enough for a quick slash.",
+        "damage": 5
+      }
+    },
+    "sword": {
+      "silver_sword": {},
+      "rusty_cutlass": {}
+    },
+    "dagger": {
+      "golden_dagger": {
+        "name": "Golden Dagger",
+        "type": "weapon",
+        "description": "A finely crafted dagger with a gleaming golden hilt, rumored to carry a subtle enchantment that grants its wielder a swiftness in combat.",
+        "damage": 25
+      }
+    },
+    "knife": {
+      "golden_dagger": {}
+    },
+    "stick": {
+      "name": "Stick",
+      "type": "weapon",
+      "description": "A simple wooden stick, useful as a makeshift weapon or a walking stick.",
+      "damage": 1
     }
   },
   "ammo": {
@@ -290,7 +324,9 @@
     "leviathan_scale": {
       "name": "Leviathan Scale",
       "type": "consumable",
-      "effect": { "defense": 20 },
+      "effect": {
+        "defense": 20
+      },
       "value": 300,
       "description": "A massive scale from the legendary Leviathan, grants temporary invulnerability."
     },
