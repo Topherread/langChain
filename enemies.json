@@ -5,19 +5,32 @@
       "health": 60,
       "damage": 20,
       "skill": 45,
-      "loot": ["gold_coins:20-30", "silver_sword:1%", "rum_bottle:50%"],
+      "loot": [
+        "gold_coins:20-30",
+        "silver_sword:1%",
+        "rum_bottle:50%"
+      ],
       "description": "A seasoned buccaneer looking for trouble",
-      "weaknesses": ["honor_duel"],
-      "resistances": ["fear", "bribery"]
+      "weaknesses": [
+        "honor_duel"
+      ],
+      "resistances": [
+        "fear",
+        "bribery"
+      ]
     },
     "deckhand": {
       "name": "Pirate Deckhand",
       "health": 30,
       "damage": 10,
       "skill": 20,
-      "loot": ["gold_coins:5-15"],
+      "loot": [
+        "gold_coins:5-15"
+      ],
       "description": "A low-ranking pirate looking for loot",
-      "weaknesses": ["intimidation"],
+      "weaknesses": [
+        "intimidation"
+      ],
       "resistances": []
     },
     "pirate_captain": {
@@ -25,10 +38,19 @@
       "health": 120,
       "damage": 35,
       "skill": 70,
-      "loot": ["gold_coins:50-100", "captains_hat:10%", "enchanted_compass:5%"],
+      "loot": [
+        "gold_coins:50-100",
+        "captains_hat:10%",
+        "enchanted_compass:5%"
+      ],
       "description": "A notorious pirate captain feared by all",
-      "weaknesses": ["bribery"],
-      "resistances": ["fear", "intimidation"]
+      "weaknesses": [
+        "bribery"
+      ],
+      "resistances": [
+        "fear",
+        "intimidation"
+      ]
     }
   },
   "navy": {
@@ -37,30 +59,55 @@
       "health": 80,
       "damage": 25,
       "skill": 50,
-      "loot": ["gold_coins:30-70", "flintlock_pistol:15%", "healing_potion:30%"],
+      "loot": [
+        "gold_coins:30-70",
+        "flintlock_pistol:15%",
+        "healing_potion:30%"
+      ],
       "description": "A disciplined officer of the navy",
-      "weaknesses": ["bribery", "stealth"],
-      "resistances": ["intimidation", "fear"]
+      "weaknesses": [
+        "bribery",
+        "stealth"
+      ],
+      "resistances": [
+        "intimidation",
+        "fear"
+      ]
     },
     "marine": {
       "name": "Marine",
       "health": 50,
       "damage": 18,
       "skill": 35,
-      "loot": ["gold_coins:15-25"],
+      "loot": [
+        "gold_coins:15-25"
+      ],
       "description": "A trained navy marine",
-      "weaknesses": ["stealth"],
-      "resistances": ["fear"]
+      "weaknesses": [
+        "stealth"
+      ],
+      "resistances": [
+        "fear"
+      ]
     },
     "admiral": {
       "name": "Navy Admiral",
       "health": 150,
       "damage": 40,
       "skill": 80,
-      "loot": ["gold_coins:100-200", "admirals_sabre:10%", "navy_medal:20%"],
+      "loot": [
+        "gold_coins:100-200",
+        "admirals_sabre:10%",
+        "navy_medal:20%"
+      ],
       "description": "The highest ranking navy officer",
-      "weaknesses": ["bribery"],
-      "resistances": ["intimidation", "fear"]
+      "weaknesses": [
+        "bribery"
+      ],
+      "resistances": [
+        "intimidation",
+        "fear"
+      ]
     }
   },
   "mythical": {
@@ -69,30 +116,73 @@
       "health": 1000,
       "damage": 35,
       "skill": 60,
-      "loot": ["kraken_ink:100%", "gold_coins:50-100"],
+      "loot": [
+        "kraken_ink:100%",
+        "gold_coins:50-100"
+      ],
       "description": "A tentacled beast from the deep",
-      "weaknesses": ["fire", "cannon"],
-      "resistances": ["sword", "stealth"]
+      "weaknesses": [
+        "fire",
+        "cannon"
+      ],
+      "resistances": [
+        "sword",
+        "stealth"
+      ]
     },
     "merfolk_warrior": {
       "name": "Merfolk Warrior",
       "health": 90,
       "damage": 28,
       "skill": 60,
-      "loot": ["gold_coins:30-60", "trident:10%"],
+      "loot": [
+        "gold_coins:30-60",
+        "trident:10%"
+      ],
       "description": "A fierce defender of the sea",
-      "weaknesses": ["electricity"],
-      "resistances": ["fear", "bribery"]
+      "weaknesses": [
+        "electricity"
+      ],
+      "resistances": [
+        "fear",
+        "bribery"
+      ]
     },
     "leviathan": {
       "name": "Leviathan",
       "health": 2000,
       "damage": 60,
       "skill": 100,
-      "loot": ["leviathan_scale:100%", "gold_coins:200-400"],
+      "loot": [
+        "leviathan_scale:100%",
+        "gold_coins:200-400"
+      ],
       "description": "A legendary sea monster",
-      "weaknesses": ["fire"],
-      "resistances": ["sword", "cannon"]
+      "weaknesses": [
+        "fire"
+      ],
+      "resistances": [
+        "sword",
+        "cannon"
+      ]
+    },
+    "dragon": {
+      "name": "dragon",
+      "health": 200,
+      "damage": 30,
+      "skill": 8,
+      "loot": [
+        "dragon_scale",
+        "ruby",
+        "crystal_fragment"
+      ],
+      "description": "A massive, winged beast with scales of obsidian and eyes that glow like embers. Its roar can shake the very foundations of the island, and it breathes a searing flame that can melt steel.",
+      "weaknesses": [
+        "ice"
+      ],
+      "resistances": [
+        "fire"
+      ]
     }
   },
   "ghost": {
@@ -101,30 +191,53 @@
       "health": 70,
       "damage": 30,
       "skill": 55,
-      "loot": ["gold_coins:40-80", "blunderbuss:10%", "rum_bottle:40%"],
+      "loot": [
+        "gold_coins:40-80",
+        "blunderbuss:10%",
+        "rum_bottle:40%"
+      ],
       "description": "The restless spirit of a long-dead pirate",
-      "weaknesses": ["silver"],
-      "resistances": ["sword", "cannon"]
+      "weaknesses": [
+        "silver"
+      ],
+      "resistances": [
+        "sword",
+        "cannon"
+      ]
     },
     "haunted_sailor": {
       "name": "Haunted Sailor",
       "health": 40,
       "damage": 12,
       "skill": 25,
-      "loot": ["gold_coins:10-20"],
+      "loot": [
+        "gold_coins:10-20"
+      ],
       "description": "A ghostly sailor doomed to wander the seas",
-      "weaknesses": ["silver"],
-      "resistances": ["fear"]
+      "weaknesses": [
+        "silver"
+      ],
+      "resistances": [
+        "fear"
+      ]
     },
     "wraith_captain": {
       "name": "Wraith Captain",
       "health": 120,
       "damage": 38,
       "skill": 70,
-      "loot": ["gold_coins:60-120", "wraith_blade:15%"],
+      "loot": [
+        "gold_coins:60-120",
+        "wraith_blade:15%"
+      ],
       "description": "A spectral captain with unfinished business",
-      "weaknesses": ["silver"],
-      "resistances": ["intimidation", "bribery"]
+      "weaknesses": [
+        "silver"
+      ],
+      "resistances": [
+        "intimidation",
+        "bribery"
+      ]
     }
   },
   "town": {
@@ -133,19 +246,30 @@
       "health": 40,
       "damage": 15,
       "skill": 30,
-      "loot": ["gold_coins:10-20"],
+      "loot": [
+        "gold_coins:10-20"
+      ],
       "description": "A local guard trying to maintain order",
-      "weaknesses": ["stealth", "bribery"],
-      "resistances": ["intimidation"]
+      "weaknesses": [
+        "stealth",
+        "bribery"
+      ],
+      "resistances": [
+        "intimidation"
+      ]
     },
     "merchant": {
       "name": "Town Merchant",
       "health": 20,
       "damage": 5,
       "skill": 10,
-      "loot": ["gold_coins:5-10"],
+      "loot": [
+        "gold_coins:5-10"
+      ],
       "description": "A merchant protecting their wares",
-      "weaknesses": ["bribery"],
+      "weaknesses": [
+        "bribery"
+      ],
       "resistances": []
     },
     "mayor": {
@@ -153,10 +277,17 @@
       "health": 60,
       "damage": 10,
       "skill": 40,
-      "loot": ["gold_coins:30-60", "mayors_ring:5%"],
+      "loot": [
+        "gold_coins:30-60",
+        "mayors_ring:5%"
+      ],
       "description": "The mayor, not used to fighting",
-      "weaknesses": ["intimidation"],
-      "resistances": ["bribery"]
+      "weaknesses": [
+        "intimidation"
+      ],
+      "resistances": [
+        "bribery"
+      ]
     }
   }
 }

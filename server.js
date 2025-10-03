@@ -448,145 +448,181 @@ const graphStateData = {
 async function processWithToolsNode(state) {
     console.log("=== PROCESSING WITH TOOLS NODE ===");
     console.log("Input state messages:", state.messages.length);
-    
-    const llmWithTools = llm.bind({ tools: allTools });
-    
-    let response;
-    try {
-        console.log("=== CALLING LLM WITH TOOLS ===");
-        console.log("Messages to LLM:", state.messages.length);
-        console.log("Available tools:", allTools.map(t => t.name));
-        
-        response = await llmWithTools.invoke(state.messages);
-        
-        console.log("RAW LLM RESPONSE:", JSON.stringify(response, null, 2));
-        console.log("Response content:", response.content);
-        console.log("Response content length:", response.content?.length || 0);
-        console.log("Tool calls:", response.tool_calls);
-        console.log("Tool calls count:", response.tool_calls?.length || 0);
-        
-    } catch (llmError) {
-        console.error("ERROR IN INITIAL LLM CALL:", llmError);
-        console.error("LLM Error details:", {
-            message: llmError.message,
-            stack: llmError.stack,
-            baseUrl: llm.baseUrl,
-            model: llm.model
-        });
-        
-        return {
-            messages: [...state.messages],
-            result: `LLM Error: ${llmError.message}. Please check if Ollama is running and the model 'gpt-oss:20b' is available.`
-        };
-    }
 
-    if (response.tool_calls && response.tool_calls.length > 0) {
-        console.log(`=== EXECUTING ${response.tool_calls.length} TOOL(S) ===`);
-        const toolResults = [];
+    const maxRetries = 4; // Allow up to 4 retry attempts
+    let currentAttempt = 0;
+    let currentMessages = [...state.messages];
+    
+    while (currentAttempt <= maxRetries) {
+        console.log(`=== ATTEMPT ${currentAttempt + 1}/${maxRetries + 1} ===`);
         
-        for (const toolCall of response.tool_calls) {
-            console.log("TOOL REQUESTED BY LLM:", JSON.stringify(toolCall, null, 2));
+        //bind the llm with tools
+        const llmWithTools = llm.bind({ tools: allTools });
+        
+        let response;
+        try {
+            console.log("=== CALLING LLM WITH TOOLS ===");
+            console.log("Messages to LLM:", currentMessages.length);
+            console.log("Available tools:", allTools.map(t => t.name));
+            //initial call to llm with tools
+            response = await llmWithTools.invoke(currentMessages);
             
-            const tool = allTools.find(t => t.name === toolCall.name);
-            if (tool) {
-                try {
-                    const toolResult = await tool.invoke(toolCall.args);
-                    console.log(`TOOL ${toolCall.name} RESULT:`, JSON.stringify(toolResult, null, 2));
+            console.log("RAW LLM RESPONSE:", JSON.stringify(response, null, 2));
+            console.log("Response content:", response.content);
+            console.log("Response content length:", response.content?.length || 0);
+            console.log("Tool calls:", response.tool_calls);
+            console.log("Tool calls count:", response.tool_calls?.length || 0);
+            
+        } catch (llmError) {
+            console.error("ERROR IN INITIAL LLM CALL:", llmError);
+            console.error("LLM Error details:", {
+                message: llmError.message,
+                stack: llmError.stack,
+                baseUrl: llm.baseUrl,
+                model: llm.model
+            });
+            
+            return {
+                messages: [...currentMessages],
+                result: `LLM Error: ${llmError.message}.`
+            };
+        }
+        //if the llm requested any tool calls execute them
+        if (response.tool_calls && response.tool_calls.length > 0) {
+            console.log(`=== EXECUTING ${response.tool_calls.length} TOOL(S) ===`);
+            const toolResults = [];
+            let canRetry = false;
+            
+            for (const toolCall of response.tool_calls) {
+                console.log("TOOL REQUESTED BY LLM:", JSON.stringify(toolCall, null, 2));
+                
+                const tool = allTools.find(t => t.name === toolCall.name);
+                if (tool) {
+                    try {
+                        const toolResult = await tool.invoke(toolCall.args);
+                        console.log(`TOOL ${toolCall.name} RESULT:`, JSON.stringify(toolResult, null, 2));
+                        toolResults.push({
+                            tool_call_id: toolCall.id,
+                            role: "tool",
+                            name: toolCall.name,
+                            content: JSON.stringify(toolResult)
+                        });
+                    } catch (error) {
+                        console.error(`Error executing tool ${toolCall.name}:`, error);
+                        
+                        // Mark that we have failures and can retry
+                        if (currentAttempt < maxRetries) {
+                            canRetry = true;
+                        }
+                        
+                        let fallbackSuggestion = error.message;
+                        
+                        if (toolCall.name === 'get_item_info' && error.message.includes('not found')) {
+                            fallbackSuggestion += '. Suggestion: Use listItemCategories tool to see available categories, or use addItemToItemsList tool to create this item if it should exist.';
+                        }
+                        
+                        if (toolCall.name === 'get_enemies_info' && error.message.includes('not found')) {
+                            fallbackSuggestion += '. Suggestion: Use listEnemyCategories tool to see available categories, or use createEnemy tool to create this enemy if it should exist.';
+                        }
+                        
+                        if (toolCall.name === 'getShopItems' && error.message.includes('Category not found')) {
+                            fallbackSuggestion += '. Suggestion: Use listItemCategories tool to see available item categories first.';
+                        }
+                        
+                        if (toolCall.name === 'getRandomEnemy' && error.message.includes('Category not found')) {
+                            fallbackSuggestion += '. Suggestion: Use listEnemyCategories tool to see available enemy categories first.';
+                        }
+                        
+                        toolResults.push({
+                            tool_call_id: toolCall.id,
+                            role: "tool",
+                            name: toolCall.name,
+                            content: `Error: ${fallbackSuggestion}`
+                        });
+                    }
+                } else {
+                    console.error(`Tool not found: ${toolCall.name}`);
                     toolResults.push({
-                        tool_call_id: toolCall.id,
-                        role: "tool",
-                        name: toolCall.name,
-                        content: JSON.stringify(toolResult)
-                    });
-                } catch (error) {
-                    console.error(`Error executing tool ${toolCall.name}:`, error);
-                    
-                    let fallbackSuggestion = error.message;
-                    
-                    if (toolCall.name === 'get_item_info' && error.message.includes('not found')) {
-                        fallbackSuggestion += '. Suggestion: Use listItemCategories tool to see available categories, or use addItemToItemsList tool to create this item if it should exist.';
-                    }
-                    
-                    if (toolCall.name === 'get_enemies_info' && error.message.includes('not found')) {
-                        fallbackSuggestion += '. Suggestion: Use listEnemyCategories tool to see available categories, or use createEnemy tool to create this enemy if it should exist.';
-                    }
-                    
-                    if (toolCall.name === 'getShopItems' && error.message.includes('Category not found')) {
-                        fallbackSuggestion += '. Suggestion: Use listItemCategories tool to see available item categories first.';
-                    }
-                    
-                    if (toolCall.name === 'getRandomEnemy' && error.message.includes('Category not found')) {
-                        fallbackSuggestion += '. Suggestion: Use listEnemyCategories tool to see available enemy categories first.';
-                    }
-                    
-                    toolResults.push({
-                        tool_call_id: toolCall.id,
-                        role: "tool",
-                        name: toolCall.name,
-                        content: `Error: ${fallbackSuggestion}`
-                    });
-                }
-            } else {
-                console.error(`Tool not found: ${toolCall.name}`);
-                toolResults.push({
                     tool_call_id: toolCall.id,
                     role: "tool",
                     name: toolCall.name,
                     content: `Error: Tool ${toolCall.name} not found`
-                });
+                    });
+                }
             }
-        }
 
-        console.log("=== GENERATING FINAL RESPONSE WITH TOOL RESULTS ===");
-        const updatedMessages = [
-            ...state.messages,
-            response,
-            ...toolResults
-        ];
+            //append the llm response and tool results to the message history
+            currentMessages = [...currentMessages, response, ...toolResults];
 
-        console.log("Updated messages count:", updatedMessages.length);
         
-        let finalResponse;
-        try {
-            finalResponse = await llm.invoke(updatedMessages);
-            console.log("FINAL RESPONSE:", JSON.stringify(finalResponse, null, 2));
-            console.log("Final content:", finalResponse.content);
-            console.log("Final content length:", finalResponse.content?.length || 0);
-            console.log("Final content type:", typeof finalResponse.content);
-        } catch (finalError) {
-            console.error("ERROR IN FINAL LLM CALL:", finalError);
+            if (canRetry && currentAttempt < maxRetries) {
+                console.log(`=== TOOL FAILURES DETECTED - RETRYING (Attempt ${currentAttempt + 2}/${maxRetries + 1}) ===`);
+                
+                // response with guidance to use discovery tools
+                const retryGuidanceMessage = {
+                    role: "system",
+                    content: "Some tools failed with suggestions. Please use the suggested discovery tools to get the correct information and then retry your original request with the proper parameters. Focus on following the specific suggestions provided in the error messages."
+                };
+                currentMessages.push(retryGuidanceMessage);
+                
+                currentAttempt++;
+                continue;
+            }
+
+            //final response after all tool call attempt
+            console.log("=== GENERATING FINAL RESPONSE WITH TOOL RESULTS ===");
+            console.log("Updated messages count:", currentMessages.length);
+            
+            let finalResponse;
+            try {
+                finalResponse = await llm.invoke(currentMessages);
+                console.log("FINAL RESPONSE:", JSON.stringify(finalResponse, null, 2));
+                console.log("Final content:", finalResponse.content);
+                console.log("Final content length:", finalResponse.content?.length || 0);
+                console.log("Final content type:", typeof finalResponse.content);
+            } catch (finalError) {
+                console.error("ERROR IN FINAL LLM CALL:", finalError);
+                return {
+                    messages: currentMessages,
+                    result: `Error in final LLM response: ${finalError.message}. Tool results were: ${JSON.stringify(toolResults, null, 2)}`
+                };
+            }
+            
+            let finalContent = finalResponse?.content;
+            
+            if (!finalContent || finalContent.trim() === '') {
+                console.warn("WARNING: LLM returned empty content");
+                console.log("Full LLM response object:", finalResponse);
+                finalContent = `The tools were executed successfully, but the LLM failed to generate a proper response. Tool results: ${JSON.stringify(toolResults.map(tr => ({tool: tr.name, result: tr.content})), null, 2)}`;
+            }
+            
             return {
-                messages: updatedMessages,
-                result: `Error in final LLM response: ${finalError.message}. Tool results were: ${JSON.stringify(toolResults, null, 2)}`
+                messages: currentMessages,
+                result: finalContent
+            };
+        } else {
+            // No tools called, return direct response
+            console.log("=== NO TOOLS CALLED, RETURNING DIRECT RESPONSE ===");
+            const content = response.content || "I apologize, but I couldn't generate a proper response. Please try rephrasing your request.";
+            return {
+                messages: [...currentMessages, response],
+                result: content
             };
         }
-        
-        let finalContent = finalResponse?.content;
-        
-        if (!finalContent || finalContent.trim() === '') {
-            console.warn("WARNING: LLM returned empty content");
-            console.log("Full LLM response object:", finalResponse);
-            finalContent = `The tools were executed successfully, but the LLM failed to generate a proper response. Tool results: ${JSON.stringify(toolResults.map(tr => ({tool: tr.name, result: tr.content})), null, 2)}`;
-        }
-        
-        return {
-            messages: updatedMessages,
-            result: finalContent
-        };
-    } else {
-        console.log("=== NO TOOLS CALLED, RETURNING DIRECT RESPONSE ===");
-        const content = response.content || "I apologize, but I couldn't generate a proper response. Please try rephrasing your request.";
-        return {
-            messages: [...state.messages, response],
-            result: content
-        };
-    }
+    } // End of retry while loop
 }
 
+
+
+//define the state graph
 const workflow = new StateGraph({ channels: graphStateData });
+//define nodes
 workflow.addNode("processWithTools", processWithToolsNode);
+//define edgs
 workflow.addEdge(START, "processWithTools");
 workflow.addEdge("processWithTools", END);
+
+//compile the graph workflow
 const graph = workflow.compile();
 
 
@@ -600,7 +636,7 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ error: 'Messages array required' });
         }
 
-        // Convert messages to LangChain format and add intelligent system guidance
+
         const langChainMessages = messages.map(msg => {
             if (msg.role === 'user') {
                 return new HumanMessage(msg.content);
@@ -640,6 +676,7 @@ When tool calls fail, use these fallback strategies:
 Remember: Your goal is to be helpful and resourceful, not just report failures.
         `);
         
+        //adds guidance message at the start of the conversation
         langChainMessages.unshift(toolGuidanceMessage);
 
         console.log('Converted LangChain messages:', langChainMessages.length);
